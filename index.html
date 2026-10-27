@@ -21,7 +21,7 @@
 :root{
   --bg:#0E1A26; --surface:#162634; --surface-2:#1E3140; --fg:#EAF1F6; --muted:#8FA6B8; --line:#27404F;
   --particle:#F2B84B; --particle-bg:#3A2D12;          /* amber: fixed particles */
-  --word:#7FD3E6; --word-bg:#113844;                   /* glacier: content words */
+  --word:#7FD3E6; --word-bg:#113844;                   /* glacier: ciphered words */
   --accent:#4FB3C9; --accent-ink:#06161C; --danger:#F08A7E;
   --ui:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --read:"Literata",Georgia,"Times New Roman",serif;
@@ -39,8 +39,7 @@
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%;overscroll-behavior:none;
-  display:flex;flex-direction:column;
-  padding-top:env(safe-area-inset-top,0px)}
+  display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -53,24 +52,27 @@ header h1 small{font-family:var(--ui);font-weight:500;font-size:12px;color:var(-
 .iconbtn svg{width:22px;height:22px}
 
 main{flex:1;min-height:0;display:flex;flex-direction:column}
-.view{flex:1;min-height:0;display:none;flex-direction:column;gap:12px;padding-block:4px 12px}
+.view{flex:1;min-height:0;display:none;flex-direction:column;gap:12px;padding-block:4px 12px;overflow:auto}
 .view.active{display:flex}
 
 /* ---- Speak view ---- */
-.sheet{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:0;flex:1;overflow:auto}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}
 .english{color:var(--muted);font-size:15px;margin:0;min-height:1.4em;word-break:break-word}
-.fjord{font-family:var(--read);font-size:clamp(24px,6.5vw,34px);line-height:1.35;margin:0;word-break:break-word;flex:1}
+.fjord{font-family:var(--read);font-size:clamp(24px,6.5vw,34px);line-height:1.5;margin:0;word-break:break-word;flex:1}
 .fjord .p{color:var(--particle);background:var(--particle-bg);border-radius:6px;padding:0 .18em}
-.fjord .w{color:var(--word)}
+.fjord .w{color:var(--word);position:relative;padding:0;border:0;font:inherit;cursor:pointer;border-bottom:1px dotted var(--line)}
+.fjord .w sup{font-family:var(--ui);font-size:.42em;color:var(--muted);margin-left:2px;vertical-align:.9em;letter-spacing:.04em}
 .fjord .punct{color:var(--muted)}
 .say{color:var(--muted);font-size:14px;margin:0;word-break:break-word}
 .say .p{color:var(--particle)}
 .say .w{color:var(--word)}
 .say b{font-weight:600;color:var(--fg)}
-.key{display:flex;gap:14px;font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:0}
+.key{display:flex;gap:14px;font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:0;flex-wrap:wrap}
 .key span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .key .kp::before{background:var(--particle)}
 .key .kw::before{background:var(--word)}
+.key .kt{text-transform:none;letter-spacing:0}
+.key .kt::before{display:none}
 .sheet-actions{display:flex;gap:8px;flex-wrap:wrap}
 .pill{border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:6px;color:var(--fg)}
 .pill:hover{background:var(--surface-2)}
@@ -109,7 +111,7 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 .card-inner{position:relative;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.2,.7,.2,1);display:grid}
 .card.flipped .card-inner{transform:rotateY(180deg)}
 @media (prefers-reduced-motion:reduce){.card-inner{transition:none}}
-.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:20px;
+.face{grid-area:1/1;position:relative;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:20px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;cursor:pointer}
 .face.back{transform:rotateY(180deg)}
 .face .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -122,6 +124,16 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 .card-controls button svg{width:18px;height:18px}
 .card-controls button.on{border-color:var(--accent);color:var(--accent)}
 .empty{text-align:center;color:var(--muted);padding:24px}
+
+/* ---- Rules view ---- */
+.rules h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;font-weight:600}
+.rules h2:first-child{margin-top:0}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.rule .when{font-size:13px;color:var(--muted)}
+.rule .how{font-weight:500}
+.rule .ex{font-family:var(--read);font-size:18px;color:var(--word)}
+.rule .ex i{font-style:normal;color:var(--muted);font-family:var(--ui);font-size:14px}
+.rules p{color:var(--muted);font-size:14px;margin:0 0 8px}
 
 /* ---- Tab bar ---- */
 nav{display:flex;border-top:1px solid var(--line);background:var(--surface);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -145,7 +157,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .switch[aria-checked="true"]::after{left:23px}
 .note{font-size:13px;color:var(--muted);margin:0}
 .close{align-self:flex-end;background:var(--surface-2);border-radius:10px;padding:10px 16px;font-weight:600;min-height:44px}
-.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;white-space:nowrap}
 .toast.show{opacity:1}
 </style>
 </head>
@@ -163,9 +175,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <section class="view active gutter" id="view-speak" role="tabpanel">
     <div class="sheet">
       <p class="english" id="english">Hold the button and say something.</p>
-      <p class="fjord" id="fjord" lang="x-fjord"><span class="p">mi</span> <span class="w">hjällör</span></p>
-      <p class="say" id="say"><b>say</b> mi · hjäl·lör</p>
-      <p class="key"><span class="kp">particle</span><span class="kw">word</span></p>
+      <p class="fjord" id="fjord" lang="x-fjord"></p>
+      <p class="say" id="say"></p>
+      <p class="key"><span class="kp">particle</span><span class="kw">word</span><span class="kt">tap a word to change verb · noun · modifier</span></p>
       <div class="sheet-actions">
         <button class="pill" id="replay"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 5.5v5h2.6L9 13.4V2.6L5.6 5.5H3zm8.2-1.2a4.5 4.5 0 0 1 0 7.4l-.9-1.1a3.1 3.1 0 0 0 0-5.2l.9-1.1z"/></svg>Say again</button>
         <button class="pill" id="copy"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M3 11V3.5A1.5 1.5 0 0 1 4.5 2H10"/></svg>Copy</button>
@@ -202,14 +214,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       </div>
       <div class="progress" id="progress"></div>
     </div>
-
     <div class="card" id="card">
       <div class="card-inner" id="cardInner">
         <div class="face front" id="front" role="button" tabindex="0" aria-label="Flip card"></div>
         <div class="face back" id="back" role="button" tabindex="0" aria-label="Flip card"></div>
       </div>
     </div>
-
     <div class="card-controls">
       <button id="prev" aria-label="Previous card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
       <button id="sayCard"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 5.5v5h2.6L9 13.4V2.6L5.6 5.5H3zm8.2-1.2a4.5 4.5 0 0 1 0 7.4l-.9-1.1a3.1 3.1 0 0 0 0-5.2l.9-1.1z"/></svg>Say</button>
@@ -221,6 +231,23 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <button id="resetKnown">Reset progress</button>
     </div>
   </section>
+
+  <!-- ===== RULES ===== -->
+  <section class="view gutter rules" id="view-rules" role="tabpanel">
+    <p>Particles never change. Every other word is a <b>verb</b>, a <b>noun</b> or a <b>modifier</b>; its first letter moves to the back, then the ending depends on what it lands next to.</p>
+    <h2>Verbs</h2>
+    <div class="rule"><div class="when">starts with a vowel</div><div class="how">rest + <b>v</b> + the vowel + <b>bus</b></div><div class="ex">eat → atvebus <i>· open → penvobus</i></div></div>
+    <div class="rule"><div class="when">starts with a consonant, rest starts with a vowel</div><div class="how">rest + the consonant + <b>or</b></div><div class="ex">run → unror <i>· go → ogor · want → antwor</i></div></div>
+    <div class="rule"><div class="when">starts with a consonant, rest starts with a consonant</div><div class="how">rest + the consonant + <b>um</b></div><div class="ex">fly → lyfum <i>· stop → topsum · bring → ringbum</i></div></div>
+    <h2>Nouns</h2>
+    <div class="rule"><div class="when">starts with a vowel</div><div class="how">rest + <b>k</b> + the vowel</div><div class="ex">arrow → rrowka <i>· apple → ppleka · egg → ggke</i></div></div>
+    <div class="rule"><div class="when">starts with a consonant, rest starts with a vowel</div><div class="how">rest + the consonant + <b>i</b></div><div class="ex">book → ookbi <i>· milk → ilkmi · river → iverri</i></div></div>
+    <div class="rule"><div class="when">starts with a consonant, rest starts with a consonant</div><div class="how">rest + the consonant + <b>ar</b></div><div class="ex">broom → roombar <i>· store → toresar · bread → readbar</i></div></div>
+    <h2>Modifiers (adjectives, adverbs)</h2>
+    <div class="rule"><div class="when">starts with a consonant</div><div class="how">rest + the consonant + <b>ig</b></div><div class="ex">quick → uickqig <i>· cold → oldcig · really → eallyrig</i></div></div>
+    <div class="rule"><div class="when">starts with a vowel</div><div class="how">rest + the vowel + <b>ig</b></div><div class="ex">open → penoig <i>· easy → asyeig</i></div></div>
+    <p style="margin-top:12px">The app guesses each word's class from a small dictionary and from the particle before it. When it guesses wrong, tap the word in the translation to cycle verb → noun → modifier; the app remembers your choice for that word.</p>
+  </section>
 </main>
 
 <nav role="tablist" aria-label="Views">
@@ -230,14 +257,18 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <button role="tab" id="tab-cards" aria-selected="false" aria-controls="view-cards">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M7 6V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-1"/></svg>Cards
   </button>
+  <button role="tab" id="tab-rules" aria-selected="false" aria-controls="view-rules">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></svg>Rules
+  </button>
 </nav>
 
 <div class="settings" id="settings" aria-hidden="true">
   <div class="panel" role="dialog" aria-label="Settings">
     <h2>Voice</h2>
-    <div class="field"><label for="voice">Voice (Swedish, Norwegian, Danish or German read Fjord best)</label><select id="voice"></select></div>
+    <div class="field"><label for="voice">Voice (Swedish, Norwegian, Danish or German give the Fjord sound)</label><select id="voice"></select></div>
     <div class="field"><label for="rate">Speed <span id="rateVal">0.9</span></label><input id="rate" type="range" min="0.5" max="1.3" step="0.05" value="0.9"></div>
     <div class="row"><span>Speak automatically after translating</span><button class="switch" id="autoSpeak" role="switch" aria-checked="true" aria-label="Speak automatically"></button></div>
+    <div class="row"><span>Forget my word-class corrections</span><button class="pill" id="resetOverrides">Reset</button></div>
     <p class="note" id="micNote"></p>
     <button class="close" id="closeSettings">Done</button>
   </div>
@@ -286,7 +317,6 @@ const PARTICLES = [
   ["kwa","what",""],["hu","who",""],["we","where",""],["wen","when",""],["wai","why",""],["hau","how",""],["kwi","which",""],
   ["ya","yes / ok",""],["pli","please",""],["tank","thanks",""],["an","also / too",""],["ol","all",""],["vi","very / really",""]
 ];
-const PARTICLE_SET = new Set(PARTICLES.map(p=>p[0]));
 
 function splitSentences(text){
   const out=[]; const re=/[^.!?]+[.!?]*/g; let m;
@@ -311,52 +341,79 @@ function compress(sentence){
   return {toks,end:end||"."};
 }
 
-/* ===================== Fjord phonology ===================== */
-const V="aeiou";
-function stripSilentE(w){
-  if(w.length>3 && /[^aeiou]e$/.test(w) && !/le$/.test(w) && /[aeiouy]/.test(w.slice(0,-2))) return w.slice(0,-1);
-  return w;
+/* ===================== Word classes: verb / noun / modifier ===================== */
+const VERBS = new Set(("go come get give take make see look watch hear listen say tell talk speak ask answer know think feel believe remember forget " +
+ "eat drink cook bake sleep wake rest sit stand walk run jump fly swim drive ride move stop start finish begin end wait stay leave arrive return " +
+ "open close push pull lift carry bring send put pick drop throw catch hold keep let find lose win play work read write draw sing dance learn teach study " +
+ "buy sell pay cost spend save help try use call meet visit live die grow build break fix cut clean wash fill pour turn change show hide " +
+ "love like hate want need hope wish plan decide choose agree seem become happen rain snow shine blow burn fall rise climb cross follow lead " +
+ "bite kick hit touch smell taste wear dress shave brush pack check press type search enter exit hurry relax laugh cry smile shout whisper " +
+ "borrow lend owe count measure weigh mix stir chop boil fry heat cool freeze melt light feed water plant dig hunt fish sail park land " +
+ "promise explain mean matter understand suggest allow refuse forgive thank welcome invite join quit miss attend drive sign print share " +
+ "add remove set run copy paste connect charge plug text email ring knock lock unlock pass offer accept " +
+ "said saw went came took gave made got found thought told knew felt kept met ran ate drank slept woke sat stood bought sold paid sent brought built broke " +
+ "drove rode flew swam wore wrote spoke heard lost won began forgot forgave chose fell rose caught taught drew sang threw hid held led fed grew blew flew").split(/\s+/));
+const MODS = new Set(("quick slow fast big small large little long short tall high low hot cold warm cool wet dry good bad great fine nice " +
+ "new old young early late soon now today tonight tomorrow yesterday later always often sometimes rarely here there far near close away back " +
+ "easy hard simple difficult clean dirty full empty heavy light loud quiet dark bright red blue green yellow black white grey gray brown pink orange purple " +
+ "happy sad angry tired sick sleepy hungry thirsty ready busy free safe sure right wrong true false real strange funny boring interesting beautiful ugly " +
+ "pretty rich poor cheap expensive open closed broken fresh sweet sour bitter salty spicy soft rough smooth sharp dull strong weak thick thin wide narrow deep shallow " +
+ "same different first last next previous only many few more most less least much enough almost maybe probably definitely again still already yet " +
+ "together alone quickly slowly carefully quietly loudly well badly better best worse worst outside inside upstairs downstairs home abroad " +
+ "after before over under up down out off through around behind above below between beyond across along past until since during " +
+ "lazy crazy busy dizzy noisy tasty tiny huge gentle rough brave calm wild quiet proud shy silly clever stupid smart kind cruel polite rude").split(/\s+/));
+const NOUNS = new Set(("morning evening night afternoon weekend week month year hour minute second day thing something nothing everything anything someone anyone everyone " +
+ "building wedding meeting feeling evening ceiling ring king sing bed red shed seed need speed feed weed bread head thread " +
+ "water milk coffee tea food dinner lunch breakfast store shop house home room kitchen door window car bus train bike road street river lake sea mountain " +
+ "dog cat bird fish horse cow pig chicken book phone computer money time work job school friend family mother father sister brother son daughter baby kid people person").split(/\s+/));
+const AFTER_VERB = new Set(["fu","ke","mu","wa","wu","pa","ha","na","mi","yu","ho","sha","ti","wi","de","pli","ka"]);
+const AFTER_NOUN = new Set(["di","min","yun","hon","tin","win","den","vo","tu","ni","po","ta","ku","fo","fa","bi","bu","za","zi","ol","kwi"]);
+function baseForm(w){
+  const c=[w];
+  if(w.endsWith("ies")) c.push(w.slice(0,-3)+"y");
+  if(w.endsWith("es")) c.push(w.slice(0,-2));
+  if(w.endsWith("s")) c.push(w.slice(0,-1));
+  if(w.endsWith("ing")){ const s=w.slice(0,-3); c.push(s,s+"e"); if(s.length>2&&s[s.length-1]===s[s.length-2]) c.push(s.slice(0,-1)); }
+  if(w.endsWith("ed")){ const s=w.slice(0,-2); c.push(s,s+"e"); if(s.length>2&&s[s.length-1]===s[s.length-2]) c.push(s.slice(0,-1)); }
+  if(w.endsWith("ied")) c.push(w.slice(0,-3)+"y");
+  if(w.endsWith("er")||w.endsWith("ly")) c.push(w.slice(0,-2));
+  if(w.endsWith("est")) c.push(w.slice(0,-3));
+  return c;
 }
-function segment(w){
-  const segs=[]; let cur="",kind=null;
-  for(let i=0;i<w.length;i++){
-    const ch=w[i]; let isV=V.includes(ch);
-    if(ch==="y"){ isV = i>0 && !V.includes(w[i-1]); }
-    const k=isV?"v":"c";
-    if(k===kind) cur+=ch; else { if(cur) segs.push({k:kind,s:cur}); cur=ch; kind=k; }
-  }
-  if(cur) segs.push({k:kind,s:cur});
-  return segs;
+function classify(w, prev, prevClass, overrides){
+  if(overrides[w]) return overrides[w];
+  const forms=baseForm(w);
+  if(forms.some(f=>NOUNS.has(f))) return "n";
+  if(forms.some(f=>MODS.has(f)) && !/ing$/.test(w)) return "m";
+  if(forms.some(f=>VERBS.has(f))) return "v";
+  if(/ly$/.test(w)&&w.length>4) return "m";
+  if(/(ful|ous|ive|able|ible|less|ish|ical|al|ic)$/.test(w)&&w.length>5) return "m";
+  if(/(tion|sion|ness|ment|ity|ship|hood|ism|ist|ology)$/.test(w)) return "n";
+  if(prev && AFTER_VERB.has(prev)) return "v";
+  if(prev && AFTER_NOUN.has(prev)) return "n";
+  if(/(ing|ed)$/.test(w)&&w.length>4) return "v";
+  if(/[^aeiou]y$/.test(w)&&w.length>3&&!/(ity|ory|ary|ery|ody|ily|ily)$/.test(w)) return "m";
+  return "n";
 }
-function digraphs(w,map){
-  let out="",i=0;
-  while(i<w.length){
-    const two=w.slice(i,i+2);
-    if(two==="gh"){ const nx=w[i+2]; out += (nx===undefined||nx==="t") ? "" : "g"; i+=2; continue; }
-    if(map[two]!==undefined){ out+=map[two]; i+=2; continue; }
-    const one=w[i];
-    if(one==="c"){ out += /[eiy]/.test(w[i+1]||"") ? "s" : "k"; i++; continue; }
-    out+=one; i++;
-  }
-  return out;
-}
-const mapChars=(s,m)=>s.split("").map(c=>m[c]!==undefined?m[c]:c).join("");
-const FJ_C={k:"kj",c:"kj",g:"gj",f:"fj",h:"hj",l:"ll",n:"nn",w:"v",y:"j",S:"skj",C:"tj",q:"kv",N:"ng"};
-const FJ_V={a:"ei",e:"ä",i:"ü",o:"ö",u:"y",y:"ü"};
-function fjord(w){
-  w=stripSilentE(w);
-  w=digraphs(w,{sh:"S",ch:"C",th:"d",ng:"N",ck:"k",ph:"f",qu:"kv",wh:"v",x:"ks"});
-  const segs=segment(w);
-  let out=segs.map(g=>g.k==="v"?(FJ_V[g.s[0]]||g.s):mapChars(g.s.replace(/(.)\1+/g,"$1"),FJ_C)).join("");
-  if(/[aeiouyäöü]$/.test(out)) out+="r";
-  return out;
+
+/* ===================== The Fjord cipher ===================== */
+const VOW="aeiou";
+const isV=c=>VOW.includes(c);
+function cipher(w, cls){
+  w=w.toLowerCase().replace(/[^a-z]/g,"");
+  if(!w) return w;
+  if(w.length===1) return w + (cls==="v"?"bus":cls==="n"?"k":"ig");
+  const first=w[0], rest=w.slice(1), restV=isV(rest[0]);
+  if(cls==="v") return isV(first) ? rest+"v"+first+"bus" : rest+first+(restV?"or":"um");
+  if(cls==="n") return isV(first) ? rest+"k"+first        : rest+first+(restV?"i":"ar");
+  return rest+first+"ig";
 }
 /* Syllable guide: split before a lone consonant, after the first of a cluster */
 function syllabify(w){
-  const isV=c=>/[aeiouyäöü]/.test(c);
+  const v=c=>/[aeiouy]/.test(c);
   let out="",i=0;
   while(i<w.length){
-    if(!isV(w[i])){ let j=i; while(j<w.length&&!isV(w[j])) j++;
+    if(!v(w[i])){ let j=i; while(j<w.length&&!v(w[j])) j++;
       const run=w.slice(i,j); const hasPrevV=i>0, hasNextV=j<w.length;
       if(hasPrevV&&hasNextV){ out += run.length===1 ? "·"+run : run[0]+"·"+run.slice(1); } else out+=run;
       i=j; }
@@ -364,15 +421,27 @@ function syllabify(w){
   }
   return out;
 }
-function translate(text){
+const CLASS_NAME={v:"verb",n:"noun",m:"modifier"};
+function translate(text, overrides={}){
   const sents=splitSentences(text).map(compress);
-  const toks=[]; // {t, kind, out}
-  sents.forEach(s=>{ s.toks.forEach(t=>toks.push({t:t.t,kind:t.kind,out:t.kind==="p"?t.t:fjord(t.t)})); toks.push({kind:"x",out:s.end}); });
+  const toks=[]; // {t, kind, cls, out}
+  sents.forEach(s=>{
+    let prev=null, prevClass=null;
+    s.toks.forEach(t=>{
+      if(t.kind==="p"){ toks.push({t:t.t,kind:"p",out:t.t}); prev=t.t; prevClass=null; }
+      else { const cls=classify(t.t,prev,prevClass,overrides); toks.push({t:t.t,kind:"c",cls,out:cipher(t.t,cls)}); prev=null; prevClass=cls; }
+    });
+    toks.push({kind:"x",out:s.end});
+  });
   return toks;
 }
-const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-function renderToks(toks){
-  return toks.map(t=>t.kind==="x"?`<span class="punct">${t.out}</span>`:`<span class="${t.kind==="p"?"p":"w"}">${esc(t.out)}</span>`).join(" ").replace(/ <span class="punct">/g,'<span class="punct">');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function renderToks(toks, interactive){
+  return toks.map((t,i)=>{
+    if(t.kind==="x") return `<span class="punct">${t.out}</span>`;
+    if(t.kind==="p") return `<span class="p">${esc(t.out)}</span>`;
+    return interactive ? `<button class="w" type="button" data-i="${i}" aria-label="${esc(t.t)}, ${CLASS_NAME[t.cls]}. Tap to change.">${esc(t.out)}<sup>${t.cls}</sup></button>` : `<span class="w">${esc(t.out)}</span>`;
+  }).join(" ").replace(/ <span class="punct">/g,'<span class="punct">');
 }
 function plain(toks){ return toks.map(t=>t.out).join(" ").replace(/ ([.!?]+)/g,"$1"); }
 
@@ -381,6 +450,7 @@ const synth=window.speechSynthesis;
 let voices=[], state=load();
 function load(){ try{ return JSON.parse(localStorage.getItem("fjord.state")||"{}"); }catch(e){ return {}; } }
 function save(){ try{ localStorage.setItem("fjord.state",JSON.stringify(state)); }catch(e){} }
+state.overrides=state.overrides||{};
 const NORDIC=/^(sv|nb|nn|no|da|de|fi|is)/i;
 function loadVoices(){
   if(!synth) return;
@@ -391,7 +461,7 @@ function loadVoices(){
   sel.innerHTML=sorted.map(v=>`<option value="${esc(v.voiceURI)}">${esc(v.name)} (${v.lang})</option>`).join("");
   if(state.voice && voices.some(v=>v.voiceURI===state.voice)) sel.value=state.voice; else { sel.value=sorted[0].voiceURI; state.voice=sel.value; }
   const nordic=NORDIC.test((voices.find(v=>v.voiceURI===sel.value)||{}).lang||"");
-  document.getElementById("micNote").textContent = nordic ? "" : "No Nordic or German voice is installed on this device. Add one in your system’s text-to-speech settings for the right ä, ö, ü and y.";
+  document.getElementById("micNote").textContent = nordic ? "" : "No Nordic or German voice is installed on this device. Add one in your system’s text-to-speech settings for the Fjord sound.";
 }
 let unlocked=false;
 function unlockAudio(){ if(unlocked||!synth) return; unlocked=true; const u=new SpeechSynthesisUtterance(" "); u.volume=0; synth.speak(u); }
@@ -408,19 +478,26 @@ function speakText(text){
 /* ===================== Speak view ===================== */
 let current=null;
 function showTranslation(english, {speak=true, remember=true}={}){
-  const toks=translate(english);
+  const toks=translate(english, state.overrides);
   if(!toks.some(t=>t.kind!=="x")) return;
   current={english,toks,text:plain(toks)};
   document.getElementById("english").textContent=english;
-  document.getElementById("fjord").innerHTML=renderToks(toks);
+  document.getElementById("fjord").innerHTML=renderToks(toks,true);
   document.getElementById("say").innerHTML="<b>say</b> "+toks.filter(t=>t.kind!=="x").map(t=>`<span class="${t.kind==="p"?"p":"w"}">${esc(t.kind==="p"?t.out:syllabify(t.out))}</span>`).join(" · ");
   if(speak && state.auto!==false) speakText(current.text);
-  if(remember){ state.history=[{e:english,f:renderToks(toks)},...(state.history||[]).filter(h=>h.e!==english)].slice(0,12); save(); renderHistory(); }
+  if(remember){ state.history=[{e:english,f:renderToks(toks,false)},...(state.history||[]).filter(h=>h.e!==english)].slice(0,12); save(); renderHistory(); }
 }
 function renderHistory(){
   const h=state.history||[]; const box=document.getElementById("history"); box.hidden=!h.length;
   document.getElementById("historyList").innerHTML=h.map((x,i)=>`<button data-i="${i}"><span class="hf">${x.f}</span><span class="he">${esc(x.e)}</span></button>`).join("");
 }
+document.getElementById("fjord").addEventListener("click",e=>{
+  const b=e.target.closest("button.w"); if(!b||!current) return;
+  const t=current.toks[+b.dataset.i]; const order=["v","n","m"]; const next=order[(order.indexOf(t.cls)+1)%3];
+  state.overrides[t.t]=next; save(); unlockAudio();
+  showTranslation(current.english,{speak:false,remember:true});
+  toast(`${t.t} → ${CLASS_NAME[next]}`); speakText(cipher(t.t,next));
+});
 document.getElementById("historyList").addEventListener("click",e=>{ const b=e.target.closest("button[data-i]"); if(b){ unlockAudio(); showTranslation(state.history[+b.dataset.i].e,{remember:false}); } });
 document.getElementById("typedForm").addEventListener("submit",e=>{ e.preventDefault(); const t=document.getElementById("typed").value.trim(); if(t){ unlockAudio(); showTranslation(t); document.getElementById("typed").value=""; } });
 document.getElementById("replay").addEventListener("click",()=>{ unlockAudio(); if(current) speakText(current.text); });
@@ -462,19 +539,17 @@ function buildDeck(){
 function renderCard(){
   const known=new Set(state.known||[]); const card=document.getElementById("card"); card.classList.remove("flipped");
   const front=document.getElementById("front"), back=document.getElementById("back");
-  document.getElementById("progress").textContent=`${known.size} / ${PARTICLES.length} known`;
-  if(!deck.length){ front.innerHTML='<div class="empty">Every particle is marked known. Switch to All, or reset progress.</div>'; back.innerHTML=""; return; }
+  if(!deck.length){ front.innerHTML='<div class="empty">Every particle is marked known. Switch to All, or reset progress.</div>'; back.innerHTML=""; document.getElementById("progress").textContent=`${known.size} / ${PARTICLES.length} known`; return; }
   const [p,en,hint]=PARTICLES[deck[idx]]; const isK=known.has(p);
   const enFace=`<div class="label">English</div><div class="big" style="font-size:clamp(26px,8vw,44px)">${esc(en)}</div><div class="sub">${esc(hint)||"&nbsp;"}</div>`;
   const fjFace=`<div class="label">Fjord particle</div><div class="big">${esc(p)}</div><div class="sub">${esc(en)}</div>`;
   const tag=isK?'<span class="known">known</span>':"";
   front.innerHTML=(dir==="en"?enFace:fjFace)+tag; back.innerHTML=(dir==="en"?fjFace:enFace)+tag;
-  front.style.position="relative"; back.style.position="relative";
   document.getElementById("known").textContent=isK?"Still learning":"Know it";
   document.getElementById("known").classList.toggle("on",isK);
   document.getElementById("progress").textContent=`${idx+1} / ${deck.length} · ${known.size} known`;
 }
-function flip(){ document.getElementById("card").classList.toggle("flipped"); const flipped=document.getElementById("card").classList.contains("flipped");
+function flip(){ const card=document.getElementById("card"); card.classList.toggle("flipped"); const flipped=card.classList.contains("flipped");
   if(deck.length && ((dir==="en"&&flipped)||(dir==="fj"&&!flipped))){ unlockAudio(); speakText(PARTICLES[deck[idx]][0]); } }
 ["front","back"].forEach(id=>{ const el=document.getElementById(id); el.addEventListener("click",flip); el.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } }); });
 document.getElementById("next").addEventListener("click",()=>{ if(deck.length){ idx=(idx+1)%deck.length; renderCard(); } });
@@ -498,14 +573,14 @@ function showView(name){
   document.querySelectorAll("nav [role=tab]").forEach(t=>t.setAttribute("aria-selected",t.id==="tab-"+name));
   state.view=name; save();
 }
-document.getElementById("tab-speak").addEventListener("click",()=>showView("speak"));
-document.getElementById("tab-cards").addEventListener("click",()=>showView("cards"));
+["speak","cards","rules"].forEach(n=>document.getElementById("tab-"+n).addEventListener("click",()=>showView(n)));
 const settings=document.getElementById("settings");
 document.getElementById("openSettings").addEventListener("click",()=>{ settings.classList.add("open"); settings.setAttribute("aria-hidden","false"); });
 document.getElementById("closeSettings").addEventListener("click",()=>{ settings.classList.remove("open"); settings.setAttribute("aria-hidden","true"); });
 settings.addEventListener("click",e=>{ if(e.target===settings) document.getElementById("closeSettings").click(); });
-document.getElementById("voice").addEventListener("change",e=>{ state.voice=e.target.value; save(); loadVoices(); unlockAudio(); speakText("hjällör"); });
+document.getElementById("voice").addEventListener("change",e=>{ state.voice=e.target.value; save(); loadVoices(); unlockAudio(); speakText("unror ookbi uickqig"); });
 document.getElementById("rate").addEventListener("input",e=>{ document.getElementById("rateVal").textContent=parseFloat(e.target.value).toFixed(2); state.rate=parseFloat(e.target.value); save(); });
+document.getElementById("resetOverrides").addEventListener("click",()=>{ state.overrides={}; save(); toast("Corrections cleared"); if(current) showTranslation(current.english,{speak:false,remember:false}); });
 const autoBtn=document.getElementById("autoSpeak");
 autoBtn.addEventListener("click",()=>{ state.auto=!(state.auto!==false); autoBtn.setAttribute("aria-checked",state.auto); save(); });
 let toastT; function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),1400); }
@@ -513,8 +588,8 @@ let toastT; function toast(msg){ const t=document.getElementById("toast"); t.tex
 /* boot */
 if(state.rate){ document.getElementById("rate").value=state.rate; document.getElementById("rateVal").textContent=state.rate.toFixed(2); }
 autoBtn.setAttribute("aria-checked",state.auto!==false);
-renderHistory(); buildDeck(); showView(state.view==="cards"?"cards":"speak");
-if(state.history&&state.history[0]) showTranslation(state.history[0].e,{speak:false,remember:false});
+renderHistory(); buildDeck(); showView(["cards","rules"].includes(state.view)?state.view:"speak");
+showTranslation((state.history&&state.history[0])?state.history[0].e:"I want to eat breakfast by the river.",{speak:false,remember:false});
 if(synth){ loadVoices(); synth.onvoiceschanged=loadVoices; setTimeout(loadVoices,800); }
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 </script>
