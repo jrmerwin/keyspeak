@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#0E1A26"/>
+  <!-- far ridge -->
+  <path d="M0 300 L90 190 L160 250 L250 140 L330 230 L410 170 L512 280 L512 512 L0 512 Z" fill="#1E3140"/>
+  <!-- near ridge -->
+  <path d="M0 360 L70 290 L150 340 L240 250 L320 330 L400 280 L512 370 L512 512 L0 512 Z" fill="#27404F"/>
+  <!-- water -->
+  <path d="M0 400 L512 400 L512 512 L0 512 Z" fill="#113844"/>
+  <path d="M60 430 H200 M260 450 H420 M110 475 H300" stroke="#7FD3E6" stroke-width="10" stroke-linecap="round" opacity=".7"/>
+  <!-- sound mark -->
+  <circle cx="256" cy="150" r="46" fill="#F2B84B"/>
+</svg>
