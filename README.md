@@ -1,9 +1,5 @@
 # Fjord
 
-A private spoken cipher-language app. Hold to talk in English; it comes back compressed and re-sounded in Fjord, spoken aloud with a Nordic voice. A flashcard view drills the 54 fixed particles.
-
-## Install it on your phone
-
 The microphone only works over HTTPS, so the files need a host. Any static host works; GitHub Pages is free:
 
 1. Create a repo (e.g. `fjord`) and push these files to its root.
@@ -16,7 +12,7 @@ Allow the microphone when asked. Everything after that runs on the device; the a
 
 ## Voices
 
-Fjord uses the system's text-to-speech voices. For the right ä, ö, ü and y, install a Swedish, Norwegian, Danish or German voice:
+keyspeak uses the system's text-to-speech voices. For the right ä, ö, ü and y, install a Swedish, Norwegian, Danish or German voice:
 
 - **iOS:** Settings → Accessibility → Spoken Content → Voices → Swedish (or German) → download one.
 - **Android:** Settings → General management → Text-to-speech → Google TTS → Install voice data → Swedish.
